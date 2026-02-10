@@ -1,31 +1,33 @@
 /* styles/screens/story_oregon_trail.css */
-/* Oregon Trail narrative panel background + overlay UI buttons (visual only) */
 
 .screen[data-screen="story_oregon_trail"] .screen-bg {
   background-image: url("../../assets/backgrounds/oregontrail-narrative-panel.webp");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: cover;
 }
 
-/* Inventory + Character via pseudo elements (visual only) */
-.screen[data-screen="story_oregon_trail"]::before,
-.screen[data-screen="story_oregon_trail"]::after {
-  content: "";
+/* Shared visual button base */
+.screen[data-screen="story_oregon_trail"] .btn-visual {
   position: absolute;
-  z-index: 60;
-  pointer-events: none;
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
   filter: drop-shadow(0 10px 18px rgba(0,0,0,0.65));
 }
 
-/* Inventory (rucksack) */
-.screen[data-screen="story_oregon_trail"]::before {
+/* Back to Library (top-left) */
+.screen[data-screen="story_oregon_trail"] .btn-library {
+  background-image: url("../../assets/buttons/back-to-library-button-oregon-trail.webp");
+
+  left: 10%;
+  top: 8%;
+  transform: translate(-50%, -50%);
+  width: 30%;
+  height: 18%;
+}
+
+/* Inventory (your locked placement can be set here) */
+.screen[data-screen="story_oregon_trail"] .btn-inventory {
   background-image: url("../../assets/buttons/inventory-rucksack-button-oregon-trail.webp");
 
-  /* tweak block */
   left: 88.67%;
   top: 54.64%;
   transform: translate(-50%, -50%);
@@ -34,33 +36,12 @@
 }
 
 /* Character button */
-.screen[data-screen="story_oregon_trail"]::after {
+.screen[data-screen="story_oregon_trail"] .btn-character {
   background-image: url("../../assets/buttons/character-button-oregon-trail.webp");
 
-  /* tweak block */
   left: 88.5%;
   top: 68.5%;
   transform: translate(-50%, -50%);
   width: 48%;
-  height: 18%;
-}
-
-/* Back to Library (top-left) as a third visual element */
-.screen[data-screen="story_oregon_trail"] .vc-back-library {
-  position: absolute;
-  z-index: 70;
-  pointer-events: none;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-  filter: drop-shadow(0 10px 18px rgba(0,0,0,0.65));
-
-  background-image: url("../../assets/buttons/back-to-library-button-oregon-trail.webp");
-
-  /* tweak block */
-  left: 10%;
-  top: 8%;
-  transform: translate(-50%, -50%);
-  width: 30%;
   height: 18%;
 }
