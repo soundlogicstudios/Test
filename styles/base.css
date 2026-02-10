@@ -1,12 +1,7 @@
-/* styles/base.css */
-:root {
-  --bg: #000;
-}
-
 html, body {
   height: 100%;
   margin: 0;
-  background: var(--bg);
+  background: #000;
 }
 
 body {
@@ -15,12 +10,13 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+* { box-sizing: border-box; }
+
 .app-root {
   position: fixed;
   inset: 0;
 }
 
-/* All screens are hidden by default */
 .screen {
   position: absolute;
   inset: 0;
@@ -29,47 +25,36 @@ body {
   background: #000;
 }
 
-/* Active screen shows */
-.screen.is-active {
-  display: block;
-}
+.screen.is-active { display: block; }
 
 .screen-bg {
   position: absolute;
   inset: 0;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
 }
 
-/* Hitboxes layer always above bg, below UI overlays */
+.ui-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none; /* visuals only */
+}
+
 .hitbox-layer {
   position: absolute;
   inset: 0;
   z-index: 50;
-  pointer-events: none;
+  pointer-events: none; /* layer itself doesn't eat taps */
 }
 
-/* If you later inject buttons for hitboxes */
 .vc-hitbox {
   position: absolute;
-  border: none;
-  background: rgba(0,0,0,0);
-  pointer-events: auto;
-}
-
-/* Simple dev nav for menu only */
-.dev-nav {
-  position: absolute;
-  left: 12px;
-  bottom: 12px;
-  z-index: 90;
-  display: flex;
-  gap: 10px;
-}
-
-.dev-nav button {
-  font: 700 14px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  padding: 10px 12px;
-  border-radius: 10px;
-  border: 1px solid rgba(255,255,255,0.25);
-  background: rgba(0,0,0,0.55);
-  color: #fff;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  pointer-events: auto; /* hitboxes are clickable */
+  -webkit-tap-highlight-color: transparent;
 }
