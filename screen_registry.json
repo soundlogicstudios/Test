@@ -1,0 +1,38 @@
+{
+  "version": "1.0.0",
+  "start_screen": "menu",
+  "screens_order": [
+    "menu",
+    "story_oregon_trail",
+    "hunt_oregon_trail",
+    "character_oregon_trail",
+    "inventory_oregon_trail"
+  ],
+  "screens": {
+    "menu": {
+      "css": "styles/screens/menu.css",
+      "hitboxes": null,
+      "controller": null
+    },
+    "story_oregon_trail": {
+      "css": "styles/screens/story_oregon_trail.css",
+      "hitboxes": null,
+      "controller": null
+    },
+    "hunt_oregon_trail": {
+      "css": "styles/screens/hunt_oregon_trail.css",
+      "hitboxes": null,
+      "controller": "src/core/controllers/hunt_oregon_trail_controller.js"
+    },
+    "character_oregon_trail": {
+      "css": "styles/screens/character_oregon_trail.css",
+      "hitboxes": null,
+      "controller": null
+    },
+    "inventory_oregon_trail": {
+      "css": "styles/screens/inventory_oregon_trail.css",
+      "hitboxes": null,
+      "controller": null
+    }
+  }
+}
