@@ -4,35 +4,40 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>VerseCraft Boot</title>
-
-  <!-- Base CSS always loaded -->
   <link rel="stylesheet" href="styles/base.css" />
 </head>
 <body>
   <main id="appRoot" class="app-root" aria-label="VerseCraft Root">
-    <!-- Screens are present in DOM; screen_manager toggles .is-active -->
+
     <section class="screen" data-screen="menu" aria-label="Menu">
       <div class="screen-bg" aria-hidden="true"></div>
       <div class="hitbox-layer" aria-hidden="true"></div>
-
-      <!-- Visible debug-safe nav buttons (NOT required for hitboxes) -->
-      <div class="dev-nav">
-        <button type="button" data-go="story_oregon_trail">Go Story</button>
-        <button type="button" data-go="hunt_oregon_trail">Go Hunt</button>
-        <button type="button" data-go="character_oregon_trail">Go Character</button>
-        <button type="button" data-go="inventory_oregon_trail">Go Inventory</button>
-      </div>
     </section>
 
     <section class="screen" data-screen="story_oregon_trail" aria-label="Story Oregon Trail">
       <div class="screen-bg" aria-hidden="true"></div>
+
+      <!-- UI visuals (one-time, no duplicates) -->
+      <div class="ui-layer ui-oregon-story" aria-hidden="true">
+        <div class="btn-visual btn-library"></div>
+        <div class="btn-visual btn-inventory"></div>
+        <div class="btn-visual btn-character"></div>
+      </div>
+
       <div class="hitbox-layer" aria-hidden="true"></div>
     </section>
 
     <section class="screen" data-screen="hunt_oregon_trail" aria-label="Hunt Oregon Trail">
       <div class="screen-bg" aria-hidden="true"></div>
+
+      <!-- stripe is visual; modal/hud created by controller -->
+      <div class="ui-layer ui-oregon-hunt" aria-hidden="true">
+        <div class="btn-visual btn-back-story"></div>
+        <div class="hunt-stripe"></div>
+      </div>
+
       <div class="hitbox-layer" aria-hidden="true"></div>
-      <!-- Targets layer is created by controller if missing -->
+      <!-- controller creates .layer-targets + HUD + modal -->
     </section>
 
     <section class="screen" data-screen="character_oregon_trail" aria-label="Character Oregon Trail">
@@ -44,6 +49,7 @@
       <div class="screen-bg" aria-hidden="true"></div>
       <div class="hitbox-layer" aria-hidden="true"></div>
     </section>
+
   </main>
 
   <script type="module" src="src/core/bootstrap.js"></script>
