@@ -1,0 +1,66 @@
+/* styles/screens/story_oregon_trail.css */
+/* Oregon Trail narrative panel background + overlay UI buttons (visual only) */
+
+.screen[data-screen="story_oregon_trail"] .screen-bg {
+  background-image: url("../../assets/backgrounds/oregontrail-narrative-panel.webp");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+/* Inventory + Character via pseudo elements (visual only) */
+.screen[data-screen="story_oregon_trail"]::before,
+.screen[data-screen="story_oregon_trail"]::after {
+  content: "";
+  position: absolute;
+  z-index: 60;
+  pointer-events: none;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  filter: drop-shadow(0 10px 18px rgba(0,0,0,0.65));
+}
+
+/* Inventory (rucksack) */
+.screen[data-screen="story_oregon_trail"]::before {
+  background-image: url("../../assets/buttons/inventory-rucksack-button-oregon-trail.webp");
+
+  /* tweak block */
+  left: 88.67%;
+  top: 54.64%;
+  transform: translate(-50%, -50%);
+  width: 30%;
+  height: 30%;
+}
+
+/* Character button */
+.screen[data-screen="story_oregon_trail"]::after {
+  background-image: url("../../assets/buttons/character-button-oregon-trail.webp");
+
+  /* tweak block */
+  left: 88.5%;
+  top: 68.5%;
+  transform: translate(-50%, -50%);
+  width: 48%;
+  height: 18%;
+}
+
+/* Back to Library (top-left) as a third visual element */
+.screen[data-screen="story_oregon_trail"] .vc-back-library {
+  position: absolute;
+  z-index: 70;
+  pointer-events: none;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  filter: drop-shadow(0 10px 18px rgba(0,0,0,0.65));
+
+  background-image: url("../../assets/buttons/back-to-library-button-oregon-trail.webp");
+
+  /* tweak block */
+  left: 10%;
+  top: 8%;
+  transform: translate(-50%, -50%);
+  width: 30%;
+  height: 18%;
+}
