@@ -1,12 +1,7 @@
 // src/core/games/target_runner.js
-// Oregon Trail hunting target runner
-// - One target at a time
-// - Off-screen spawn only
-// - Fixed horizontal track (no up/down)
-// - Weighted animals: squirrel 40, rabbit 30, deer 20, bear 8
-// - Special attack appears ONLY after a bear escapes (missed by letting it pass)
-// - Facing flips by travel direction
-// - Stripe-based scoring using distance from center X at time of FIRE
+// Fixed-track target runner with weighted animals + bear-attack followup.
+// One target at a time. Spawns off-screen only. Facing flips by direction.
+// Special attack target appears ONLY after a bear escapes (passes off-screen).
 
 function pickWeighted(entries) {
   const total = entries.reduce((s, e) => s + e.w, 0);
@@ -18,8 +13,8 @@ function pickWeighted(entries) {
   return entries[entries.length - 1].key;
 }
 
-function pct(n) {
-  return Math.max(0, Math.min(100, n));
+function clamp(n, a, b) {
+  return Math.max(a, Math.min(b, n));
 }
 
 export class TargetRunner {
@@ -33,21 +28,12 @@ export class TargetRunner {
       trackYPercent: 56,
       stripeCenterXPercent: 50,
       stripeHalfWidthPercent: 12,
-
       perfectBandPercent: 2.5,
       goodBandPercent: 5.5,
       grazeBandPercent: 9.0,
-
       spawnIntervalMs: 950,
       speedPercentPerSec: 28,
-
-      sizes: {
-        squirrel: 14,
-        rabbit: 15,
-        deer: 16,
-        bear: 18,
-        bear_attack: 18
-      },
+      sizes: { squirrel: 14, rabbit: 15, deer: 16, bear: 18, bear_attack: 18 },
       ...config
     };
 
@@ -56,10 +42,10 @@ export class TargetRunner {
     this.lastT = 0;
     this.spawnTimer = 0;
 
-    this.active = null; // { el, type, dir, xPct, speedPctPerSec, wPct, alive, leftExitPct, rightExitPct }
+    this.active = null;
     this.pendingBearAttack = false;
 
-    // ✅ SINGLE SOURCE OF TRUTH FOR TARGET FILENAMES
+    // ✅ FILENAMES MATCH YOUR SCREENSHOT LISTING (hyphens)
     this.assets = {
       squirrel: {
         left: "assets/targets/squirrel-left-facing.webp",
@@ -85,14 +71,11 @@ export class TargetRunner {
 
   start() {
     if (this.running) return;
-    if (!this.rootEl) return;
-
-    if (!this.layer) this.layer = this.ensureLayer();
+    if (!this.rootEl || !this.layer) return;
 
     this.running = true;
     this.lastT = performance.now();
     this.spawnTimer = 0;
-
     this.loop();
   }
 
@@ -105,22 +88,14 @@ export class TargetRunner {
     this.active = null;
   }
 
-  ensureLayer() {
-    const layer = document.createElement("div");
-    layer.className = "layer layer-targets";
-    layer.style.position = "absolute";
-    layer.style.inset = "0";
-    layer.style.pointerEvents = "none";
-    layer.style.zIndex = "25";
-    this.rootEl.appendChild(layer);
-    return layer;
-  }
-
   chooseType() {
     if (this.pendingBearAttack) {
       this.pendingBearAttack = false;
       return "bear_attack";
     }
+
+    // Your requested rarity:
+    // squirrel 40%, rabbit 30%, deer 20%, bear 8%, (bear_attack only by condition)
     return pickWeighted([
       { key: "squirrel", w: 40 },
       { key: "rabbit", w: 30 },
@@ -138,15 +113,14 @@ export class TargetRunner {
     const wPct = Number(this.config.sizes?.[type] ?? 15);
     const speed = Number(this.config.speedPercentPerSec ?? 28) * (dir === "L2R" ? 1 : -1);
 
-    // Spawn fully off-screen: xPct < 0 or > 100+wPct
+    // OFF-SCREEN ONLY
     const marginPct = 6;
     const startXPct = dir === "L2R" ? -(wPct + marginPct) : (100 + marginPct);
     const endXPct = dir === "L2R" ? (100 + marginPct) : -(wPct + marginPct);
 
-    const yPct = pct(Number(this.config.trackYPercent ?? 56));
+    const yPct = clamp(Number(this.config.trackYPercent ?? 56), 0, 100);
 
     const img = document.createElement("img");
-    img.className = `tgt tgt--${type} ${dir === "L2R" ? "is-right" : "is-left"}`;
     img.alt = "";
     img.decoding = "async";
     img.draggable = false;
@@ -154,20 +128,19 @@ export class TargetRunner {
     if (type === "bear_attack") {
       img.src = this.assets.bear_attack.single;
     } else {
-      // When moving L->R, the sprite should face RIGHT (coming from left)
-      // When moving R->L, the sprite should face LEFT (coming from right)
+      // Correct facing based on travel direction:
+      // L2R => face RIGHT, R2L => face LEFT
       img.src = dir === "L2R" ? this.assets[type].right : this.assets[type].left;
     }
 
     img.onerror = () => console.error("[hunt] Missing image:", img.src);
 
-    // Positioning: absolute within layer using % (so it scales with screen)
     img.style.position = "absolute";
-    img.style.top = `${yPct}%`;
     img.style.left = `${startXPct}%`;
+    img.style.top = `${yPct}%`;
     img.style.width = `${wPct}%`;
     img.style.transform = "translateY(-50%)";
-    img.style.pointerEvents = "none"; // we shoot with FIRE button
+    img.style.pointerEvents = "none";
 
     this.layer.appendChild(img);
 
@@ -183,13 +156,11 @@ export class TargetRunner {
     };
   }
 
-  // Called when user presses FIRE
   fire() {
     const cfg = this.config;
-    const stripeX = pct(Number(cfg.stripeCenterXPercent ?? 50));
+    const stripeX = clamp(Number(cfg.stripeCenterXPercent ?? 50), 0, 100);
     const half = Math.max(1, Number(cfg.stripeHalfWidthPercent ?? 12));
 
-    // No target => miss
     if (!this.active || !this.active.alive) {
       const r = { outcome: "miss", points: 0, type: null };
       this.onResult?.(r);
@@ -198,12 +169,10 @@ export class TargetRunner {
     }
 
     const t = this.active;
-
-    // target center x in %
     const centerX = t.xPct + (t.wPct / 2);
-
-    // outside stripe window => miss
     const dist = Math.abs(centerX - stripeX);
+
+    // Outside stripe => MISS
     if (dist > half) {
       const r = { outcome: "miss", points: 0, type: t.type };
       this.onResult?.(r);
@@ -211,7 +180,6 @@ export class TargetRunner {
       return r;
     }
 
-    // band scoring inside stripe
     const perfect = Number(cfg.perfectBandPercent ?? 2.5);
     const good = Number(cfg.goodBandPercent ?? 5.5);
     const graze = Number(cfg.grazeBandPercent ?? 9.0);
@@ -219,28 +187,18 @@ export class TargetRunner {
     let outcome = "graze";
     let points = 1;
 
-    if (dist <= perfect) {
-      outcome = "perfect";
-      points = 3;
-    } else if (dist <= good) {
-      outcome = "good";
-      points = 2;
-    } else if (dist <= graze) {
-      outcome = "graze";
-      points = 1;
-    } else {
-      outcome = "miss";
-      points = 0;
-    }
+    if (dist <= perfect) { outcome = "perfect"; points = 3; }
+    else if (dist <= good) { outcome = "good"; points = 2; }
+    else if (dist <= graze) { outcome = "graze"; points = 1; }
+    else { outcome = "miss"; points = 0; }
 
-    // If hit (not miss), remove target immediately
     if (points > 0) {
       t.alive = false;
       t.el.remove();
       this.active = null;
     } else {
-      // Missed shot does NOT trigger bear attack.
-      // Bear attack triggers only if bear escapes (passes end off-screen).
+      // Bear-attack is NOT triggered by a bad shot.
+      // It is triggered only when a BEAR ESCAPES off-screen.
       this.onMiss?.();
     }
 
@@ -261,14 +219,14 @@ export class TargetRunner {
       (t.speedPctPerSec < 0 && t.xPct < t.endXPct);
 
     if (passed) {
-      const missedType = t.type;
+      const escapedType = t.type;
 
       t.alive = false;
       t.el.remove();
       this.active = null;
 
-      // Special attack only after bear ESCAPES (no hit)
-      if (missedType === "bear") {
+      // Special attack ONLY after bear escapes
+      if (escapedType === "bear") {
         this.pendingBearAttack = true;
       }
 
