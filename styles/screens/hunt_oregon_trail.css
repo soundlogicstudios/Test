@@ -1,16 +1,6 @@
 /* styles/screens/hunt_oregon_trail.css */
-/* Oregon Trail Hunting screen background + back-to-story visual + HUD + stripe */
 
-.screen[data-screen="hunt_oregon_trail"] {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-}
-
-/* Background image layer (your existing pattern) */
 .screen[data-screen="hunt_oregon_trail"] .screen-bg {
-  position: absolute;
-  inset: 0;
   background-image: url("../../assets/backgrounds/oregon-trail-hunting-minigame.webp");
   background-repeat: no-repeat;
   background-position: center;
@@ -21,68 +11,74 @@
 .screen[data-screen="hunt_oregon_trail"]::after {
   content: "";
   position: absolute;
-  z-index: 20;           /* above background, below HUD if needed */
-  pointer-events: none;  /* DO NOT block hitboxes */
+  z-index: 60;
+  pointer-events: none;
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
   filter: drop-shadow(0 10px 18px rgba(0,0,0,0.65));
 
-  /* Default placement */
-  left: 3vw;
-  bottom: 4vh;
-  width: clamp(200px, 42vw, 340px);
-  height: clamp(64px, 12vw, 110px);
-
   background-image: url("../../assets/buttons/back-to-story-button-oregon-trail.webp");
+
+  /* tweak block */
+  left: 18%;
+  top: 86%;
+  transform: translate(-50%, -50%);
+  width: 42%;
+  height: 16%;
 }
 
-/* === Position/size tweak block (match your other screens style) ===
-   Use inspector to adjust ONLY these values if needed. */
-.screen.is-active[data-screen="hunt_oregon_trail"]::after {
-  /* tweakable anchor */
-  left: 18% !important;
-  top: 86% !important;
-  transform: translate(-50%, -50%) !important;
-
-  /* tweakable size */
-  width: 42% !important;
-  height: 16% !important;
-
-  right: auto !important;
-  bottom: auto !important;
-}
-
-/* Targets layer created by controller */
+/* Targets layer (created by controller) */
 .screen[data-screen="hunt_oregon_trail"] .layer-targets {
   position: absolute;
   inset: 0;
-  z-index: 25;
+  z-index: 55;
   pointer-events: none;
+}
+
+/* Stripe visualization (the scoring zone) */
+.screen[data-screen="hunt_oregon_trail"] .hunt-stripe {
+  position: absolute;
+  left: 50%;
+  top: 56%;
+  transform: translate(-50%, -50%);
+  width: 26vw;
+  min-width: 160px;
+  max-width: 360px;
+  height: 20vh;
+  max-height: 240px;
+  border: 2px dashed rgba(255,255,255,0.35);
+  border-radius: 16px;
+  pointer-events: none;
+  z-index: 58;
+}
+
+.screen[data-screen="hunt_oregon_trail"] .hunt-stripe::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  transform: translateX(-50%);
+  background: rgba(255,255,255,0.65);
 }
 
 /* HUD */
 .screen[data-screen="hunt_oregon_trail"] .hunt-hud {
   position: absolute;
-  inset: 0;
-  z-index: 40;
-  pointer-events: none;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-}
-
-.screen[data-screen="hunt_oregon_trail"] .hunt-hud-row {
-  position: absolute;
   left: 50%;
   bottom: 4vh;
   transform: translateX(-50%);
+  z-index: 70;
   display: flex;
   gap: 10px;
   align-items: center;
-  pointer-events: none;
+  pointer-events: auto;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 
 .screen[data-screen="hunt_oregon_trail"] .hunt-pill {
-  pointer-events: none;
   color: #fff;
   background: rgba(0,0,0,0.45);
   border: 1px solid rgba(255,255,255,0.18);
@@ -93,127 +89,12 @@
 }
 
 .screen[data-screen="hunt_oregon_trail"] .hunt-fire {
-  pointer-events: auto; /* clickable */
   appearance: none;
   border: 1px solid rgba(255,255,255,0.25);
   background: rgba(180, 40, 40, 0.75);
   color: #fff;
   border-radius: 12px;
   padding: 10px 16px;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-}
-
-/* Stripe (center reticle window) */
-.screen[data-screen="hunt_oregon_trail"] .hunt-stripe {
-  position: absolute;
-  left: 50%;
-  top: 56%;              /* should match trackYPercent visually */
-  transform: translate(-50%, -50%);
-  width: 24vw;           /* matches stripeHalfWidthPercent-ish visually */
-  min-width: 160px;
-  max-width: 340px;
-  height: 18vh;
-  max-height: 220px;
-  border: 2px dashed rgba(255,255,255,0.35);
-  border-radius: 16px;
-  pointer-events: none;
-}
-
-.screen[data-screen="hunt_oregon_trail"] .hunt-stripe-line {
-  position: absolute;
-  left: 50%;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  transform: translateX(-50%);
-  background: rgba(255,255,255,0.65);
-}
-
-/* Modal */
-.screen[data-screen="hunt_oregon_trail"] .hunt-modal-backdrop {
-  position: absolute;
-  inset: 0;
-  z-index: 60;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(8px);
-  pointer-events: auto;
-}
-
-.screen[data-screen="hunt_oregon_trail"] .hunt-modal {
-  position: absolute;
-  left: 50%;
-  top: 18%;
-  transform: translateX(-50%);
-  width: min(92vw, 520px);
-  background: rgba(20,20,20,0.82);
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 16px;
-  padding: 14px 14px 12px;
-  color: #fff;
-}
-
-.screen[data-screen="hunt_oregon_trail"] .hunt-modal-title {
   font-weight: 900;
-  letter-spacing: 0.02em;
-  margin-bottom: 8px;
-  font-size: 16px;
-}
-
-.screen[data-screen="hunt_oregon_trail"] .hunt-modal-body {
-  font-size: 14px;
-  line-height: 1.35;
-  opacity: 0.95;
-}
-
-.screen[data-screen="hunt_oregon_trail"] .hunt-modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 12px;
-}
-
-.screen[data-screen="hunt_oregon_trail"] .hunt-modal-btn {
-  pointer-events: auto;
-  appearance: none;
-  border: 1px solid rgba(255,255,255,0.22);
-  background: rgba(255,255,255,0.12);
-  color: #fff;
-  border-radius: 12px;
-  padding: 10px 12px;
-  font-weight: 800;
-}
-
-/* End card */
-.screen[data-screen="hunt_oregon_trail"] .hunt-end {
-  position: absolute;
-  inset: 0;
-  z-index: 70;
-  background: rgba(0,0,0,0.62);
-  backdrop-filter: blur(10px);
-  pointer-events: auto;
-}
-
-.screen[data-screen="hunt_oregon_trail"] .hunt-end-card {
-  position: absolute;
-  left: 50%;
-  top: 24%;
-  transform: translateX(-50%);
-  width: min(92vw, 520px);
-  background: rgba(18,18,18,0.86);
-  border: 1px solid rgba(255,255,255,0.22);
-  border-radius: 16px;
-  padding: 14px;
-  color: #fff;
-}
-
-.screen[data-screen="hunt_oregon_trail"] .hunt-end-title {
-  font-weight: 900;
-  margin-bottom: 8px;
-}
-
-.screen[data-screen="hunt_oregon_trail"] .hunt-end-actions {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-end;
-  margin-top: 12px;
+  letter-spacing: 0.08em;
 }
