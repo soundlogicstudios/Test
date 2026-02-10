@@ -11,27 +11,27 @@
   "screens": {
     "menu": {
       "css": "styles/screens/menu.css",
-      "hitboxes": null,
+      "hitboxes": "content/hitboxes/menu.json",
       "controller": null
     },
     "story_oregon_trail": {
       "css": "styles/screens/story_oregon_trail.css",
-      "hitboxes": null,
+      "hitboxes": "content/hitboxes/story_oregon_trail.json",
       "controller": null
     },
     "hunt_oregon_trail": {
       "css": "styles/screens/hunt_oregon_trail.css",
-      "hitboxes": null,
+      "hitboxes": "content/hitboxes/hunt_oregon_trail.json",
       "controller": "src/core/controllers/hunt_oregon_trail_controller.js"
     },
     "character_oregon_trail": {
       "css": "styles/screens/character_oregon_trail.css",
-      "hitboxes": null,
+      "hitboxes": "content/hitboxes/character_oregon_trail.json",
       "controller": null
     },
     "inventory_oregon_trail": {
       "css": "styles/screens/inventory_oregon_trail.css",
-      "hitboxes": null,
+      "hitboxes": "content/hitboxes/inventory_oregon_trail.json",
       "controller": null
     }
   }
